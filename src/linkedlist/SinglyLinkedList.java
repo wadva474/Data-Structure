@@ -1,6 +1,7 @@
 package linkedlist;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class SinglyLinkedList<T> {
     //Node inner class for SLL
@@ -110,36 +111,94 @@ public class SinglyLinkedList<T> {
     public static <T> Object findMiddle(SinglyLinkedList<T> list) {
         // Write -- Your -- Code
         SinglyLinkedList<T>.Node currentNode = list.headNode;
-        int count = 0 ;
-        while(currentNode != null){
-            count ++;
+        int count = 0;
+        while (currentNode != null) {
+            count++;
             currentNode = currentNode.nextNode;
         }
 
-        int midPoint = count/2 ;
+        int midPoint = count / 2;
         currentNode = list.headNode;
-        for(int i = 0; i<midPoint;i++){
+        for (int i = 0; i < midPoint; i++) {
             currentNode = currentNode.nextNode;
         }
         return currentNode.data;
     }
 
 
-    public static <T> void removeDuplicates(SinglyLinkedList<T> list) {
-        SinglyLinkedList<T>.Node current = list.headNode; // will be used for outer loop
-        SinglyLinkedList<T>.Node compare = null;     // will be used for inner loop
+    public void removeDuplicatesWithHashing() {
+        Node current = this.headNode;
+        Node prevNode = this.headNode;
+        //will store all the elements that we observe once
+        HashSet<T> visitedNodes = new HashSet<T>();
 
-        while (current != null && current.nextNode != null) {
-            compare = current;
-            while (compare.nextNode != null) {
-                if (current.data.equals(compare.nextNode.data)) { //check if duplicate
-                    compare.nextNode = compare.nextNode.nextNode;
+        if (!isEmpty() && current.nextNode != null) {
+            while (current != null) {
+                //check if already visited then delete this node
+                if (visitedNodes.contains(current.data)) {
+                    //deleting the node by undating the pointer of previous node
+                    prevNode.nextNode = current.nextNode;
                 } else {
-                    compare = compare.nextNode;
+                    //if node was not already visited then add it to the visited set
+                    visitedNodes.add(current.data);
+                    //moving on to next element in the list
+                    prevNode = current;
                 }
+                current = current.nextNode;
+            }
+        }
+    }
+
+    //Union and Intersection
+    public static <T> SinglyLinkedList<T> union(SinglyLinkedList<T> list1, SinglyLinkedList<T> list2) {
+        SinglyLinkedList<T> union = new SinglyLinkedList<>();
+        SinglyLinkedList<T>.Node headNodeOne = list1.headNode;
+        SinglyLinkedList<T>.Node headNodeTwo = list2.headNode;
+
+        while (!list1.isEmpty() && headNodeOne != null) {
+            union.insertAtEnd(headNodeOne.data);
+            headNodeOne = headNodeOne.nextNode;
+        }
+
+        while (!list2.isEmpty() && headNodeTwo != null) {
+            union.insertAtEnd(headNodeTwo.data);
+            headNodeTwo = headNodeTwo.nextNode;
+        }
+
+        union.removeDuplicatesWithHashing();
+        return union;
+    }
+
+    public static <T> boolean contains(SinglyLinkedList<T> list, T data) {
+        SinglyLinkedList<T>.Node current = list.headNode;
+        //traverses the whole list
+        while (current != null) {
+            //returns true if found
+            if (current.data.equals(data))
+                return true;
+            current = current.nextNode;
+        }
+        //returns false if not found
+        return false;
+    }
+
+    public static <T> SinglyLinkedList<T> intersection(SinglyLinkedList<T> list1, SinglyLinkedList<T> list2) {
+        SinglyLinkedList<T> result = new SinglyLinkedList<T>();
+        //returns empty list if either one of the lists is empty
+        if (list1.isEmpty() || list2.isEmpty())
+            return result;
+
+        SinglyLinkedList<T>.Node current = list1.headNode;
+        //traverses list1 and checks if each element is present in list2
+        while (current != null) {
+            if (contains(list2, current.data)) {
+                //inserts in result if it is present in both
+                result.insertAtHead(current.data);
             }
             current = current.nextNode;
         }
+
+        return result;
     }
 }
 
