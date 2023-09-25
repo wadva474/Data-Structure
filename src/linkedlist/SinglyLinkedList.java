@@ -1,6 +1,5 @@
 package linkedlist;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class SinglyLinkedList<T> {
@@ -199,6 +198,30 @@ public class SinglyLinkedList<T> {
         }
 
         return result;
+    }
+
+    public static <T> Object nthElementFromEnd(SinglyLinkedList<T> list, int n) {
+        SinglyLinkedList<T>.Node head = list.headNode;
+        int count = 0;
+        int positionFromFront;
+        if(list.isEmpty()) {
+            return null;
+        }
+        while(head != null){
+            count ++;
+            head = head.nextNode;
+        }
+
+        if(n > count){
+            return null;
+        }
+
+        positionFromFront = count - n;
+        head = list.headNode;
+        for(int i = 1; i <= positionFromFront; i++){
+            head = head.nextNode;
+        }
+        return head.data;
     }
 }
 
