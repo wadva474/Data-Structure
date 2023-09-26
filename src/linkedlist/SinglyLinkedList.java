@@ -223,6 +223,8 @@ public class SinglyLinkedList<T> {
         }
         return head.data;
     }
+
+
 }
 
 
